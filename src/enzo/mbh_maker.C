@@ -128,9 +128,9 @@ int mbh_maker(int *nx, int *ny, int *nz, int *size, float *d, float *u,
 	      tcp[ii] = (float) ((*t) + dummy_float[1]);
 
 	    // MBH other attributes 
-	    up[ii] = u[index];
-	    vp[ii] = v[index];
-	    wp[ii] = w[index];
+	    up[ii] = 0.0;
+	    vp[ii] = 0.0;
+	    wp[ii] = 0.0;
 	    tdp[ii] = MBHMinDynamicalTime;
 	    
 	    // the particle type has to be negative because it is just created 

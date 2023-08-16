@@ -89,19 +89,19 @@ int Star::Accrete(void)
     }
   }
 
-  /* [3] For MBH, 
-     because gas mass is added to MBH from many cells with zero net momentum,
-     just decrease the particle's velocity accordingly. */
+  /* [3] For MBH, fix it space */
 
   if (type == MBH) {
 //    printf("star::Accrete: old_vel[1] = %g\n", vel[1]);
-    vel[0] *= old_mass / Mass; 
-    vel[1] *= old_mass / Mass;
-    vel[2] *= old_mass / Mass; 
+    vel[0] = 0.0;  
+    vel[1] = 0.0; 
+    vel[2] = 0.0;  
 //    printf("star::Accrete: old_mass = %lf  ->  Mass = %lf\n", old_mass, Mass); 
 //    printf("star::Accrete: new_vel[1] = %g\n", vel[1]);
+  
+    printf("StarAccrete[%"ISYM"]: vel = (%"GSYM", %"GSYM", %"GSYM"), pos = (%"GSYM", %"GSYM", %"GSYM"), mass = %"GSYM"\n",
+      Identifier, vel[0], vel[1], vel[2], pos[0], pos[1], pos[2], FLOAT(Mass));
   }
-
 
   /* Keep the last accretion_rate for future use */
 
