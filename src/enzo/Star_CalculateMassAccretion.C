@@ -500,6 +500,45 @@ int Star::CalculateMassAccretion(float &BondiRadius, float &density)
 		 divergence * VelocityUnits / SolarMass);	
     }		   
 
+    // Cold gas accretion (Nina Akerman)
+    if (MBHAccretion == 9 || MBHAccretion == 19)
+    {
+      int index_L;
+      float ColdGasTemperature = 3.0e4; // K
+      float ColdGasMass = 0.0;
+      float AccTime = 5.0; // in Myr
+
+      /* Find cold gas mass in 27 cells surrounding MBH */
+  
+      for (int kk = -1; kk <= 1; kk++) 
+      {        
+        for (int jj = -1; jj <= 1; jj++) 
+        {        
+          for (int ii = -1; ii <= 1; ii++) 
+          {
+            index_L = 
+              ((igrid[2] + kk + CurrentGrid->GridStartIndex[2]) * CurrentGrid->GridDimension[1] + 
+               igrid[1] + jj + CurrentGrid->GridStartIndex[1]) * CurrentGrid->GridDimension[0] + 
+              igrid[0] + ii + CurrentGrid->GridStartIndex[0];
+
+      //      temperature = CurrentGrid->BaryonFieldTemperature[index_L]
+            if (temperature[index_L] < ColdGasTemperature){
+              ColdGasMass += CurrentGrid->BaryonField[DensNum][index_L] * 
+                DensityUnits * POW(CurrentGrid->CellWidth[0][0]*LengthUnits, 3.0) / SolarMass; // in SolarMass
+ //             fprintf(stdout, "[intermediate] Cold gas acc[%"ISYM"]: temperature = %"GSYM" K, M_gas = %"GSYM" Msun\n",
+ //               Identifier, temperature[index_L], ColdGasMass);
+            }
+          }
+        }
+      }
+
+      mdot = ColdGasMass / (AccTime * 1e6 * yr_s); // Msun/s
+
+      fprintf(stdout, "Cold gas acc[%"ISYM"]: Mdot = %"GSYM" Msun/yr, M_gas = %"GSYM" Msun\n",
+        Identifier, mdot*yr_s, ColdGasMass);
+
+    }	
+
     /* Calculate Eddington accretion rate in SolarMass/s; In general, when calculating 
        the Eddington limit the radiative efficiency shouldn't be smaller than 
        0.1 even when MBHFeedbackRadiativeEfficiency is set to be lower than 0.1 for 
